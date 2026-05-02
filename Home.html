@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Underground Games</title>
+<link href="favicon.png" rel="icon" type="image/png"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;family=VT323&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'VT323', monospace;
+            background-color: #000;
+            color: #FFFF00;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            font-size: 20px;
+            animation: flicker 0.1s infinite alternate;
+        }
+
+        /* CRT Scanline Overlay */
+        body::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: repeating-linear-gradient(0deg,
+                rgba(0, 0, 0, 0.5) 0px,
+                rgba(0, 0, 0, 0.5) 1px,
+                transparent 1px,
+                transparent 2px);
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 1; }
+            50% { opacity: 0.98; }
+            100% { opacity: 1; }
+        }
+
+        header {
+            background-color: #111;
+            padding: 20px 0;
+            border-bottom: 2px solid #FFFF00;
+        }
+        
+        header h1 {
+            margin: 0;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 2.5rem;
+            color: #FFFF00;
+            text-shadow: 0 0 10px #FFFF00;
+        }
+        
+        /* Blinking cursor for H1 */
+        header h1::after {
+            content: '_';
+            animation: blink 1s step-end infinite;
+            color: #FFFF00;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+            
+        header h4 {
+            display: block;
+            font-size: 1.2em;
+            margin-top: 1em;
+            margin-bottom: 1em;
+            margin-left: 0;
+            margin-right: 0;
+            font-weight: bold;
+            color: #FFB000; /* Amber */
+        }
+        
+        header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #FFB000; /* Amber */
+            font-family: 'Press Start 2P', cursive;
+            text-shadow: 0 0 8px #FFB000;
+        }
+        
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px;
+            gap: 20px;
+        }
+        
+        .card {
+            background-color: #111;
+            border: 2px solid #FFFF00;
+            border-radius: 0;
+            overflow: hidden;
+            width: 300px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            color: #FFFF00;
+        }
+        
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #FFFF00;
+        }
+        
+        .card img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .card h3 {
+            margin: 10px 0;
+            font-size: 1.2rem;
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        .cardsmall {
+            background-color: #111;
+            border: 2px solid #FFFF00;
+            border-radius: 0;
+            overflow: hidden;
+            width: 167px; /* 50% of the original 300px */
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            color: #FFFF00;
+        }
+
+        .cardsmall:hover {
+            transform: scale(.98);
+            box-shadow: 0 0 5px #FFFF00;
+        }
+
+        .cardsmall img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .cardsmall h3 {
+            margin: 10px 0;
+            font-size: 0.7rem; /* Adjusted for smaller card */
+            font-family: 'Press Start 2P', cursive;
+        }
+        
+        footer {
+            background-color: #111;
+            padding: 10px 0;
+            margin-top: 20px;
+            border-top: 2px solid #FFFF00;
+        }
+        
+        footer p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        
+        a {
+            color: #FFB000; /* Amber */
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover {
+            color: #FFFF00;
+            text-decoration: underline;
+        }
+
+        #searchBox {
+            padding: 5px 10px;
+            width: 250px;
+            border-radius: 0;
+            background: #000;
+            color: #FFFF00;
+            border: 2px solid #FFFF00;
+            font-family: 'VT323', monospace;
+            font-size: 18px;
+        }
+        
+        .results {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 1px solid #FFFF00;
+            display: none;
+            width: 250px;
+            background: #000;
+            z-index: 1001;
+            box-shadow: 0 0 10px #FFFF00;
+            color: #FFFF00;
+            border-radius: 0;
+        }
+        
+        .results div {
+            padding: 5px;
+            cursor: pointer;
+            text-align: left;
+        }
+        
+        .results div:hover {
+            background: #FFFF00;
+            color: #000;
+            border-radius: 0;
+        }
+
+        /* Light mode styles removed as they conflict with retro theme */
+
+        .featured {
+            background-color: red; /* This is fine, adds emphasis */
+        }
+        
+        .hide-images img {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<header>
+<h1>The Underground Games</h1>
+<h2>50+ Games</h2>
+<h4 style="color:#FFB000;">"↑↑↓↓←→←→"</h4>
+<input id="searchBox" placeholder="Search..." type="text"/>
+<div class="results" id="results"></div>
+<style>
+  .notice {
+    max-width: 600px;
+    margin: 0 auto; /* Center horizontally */
+    padding: 20px;
+    background-color: #111;
+    border: 2px solid #FFB000; /* Amber for warning */
+    border-radius: 0;
+    box-shadow: 0 0 10px #FFB000;
+    text-align: center;
+    position: relative; /* For positioning the close button */
+    margin-top: 10px;
+  }
+  .notice h1 {
+    color: #FFB000;
+    margin-bottom: 20px;
+    font-family: 'Press Start 2P', cursive;
+  }
+  .notice a {
+    font-weight: bold;
+    color: #FFB000;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+  .notice a:hover {
+    color: #FFFF00;
+  }
+  .notice p {
+    color: #FFFF00;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+  .notice strong {
+    color: #FFFF00;
+    font-weight: bold;
+  }
+  /* Updated Close Button Style */
+  .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    background-color: #FFB000;
+    color: #000;
+    border: none;
+    border-radius: 0;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: none;
+    transition: background-color 0.3s ease;
+    font-family: 'Press Start 2P', cursive;
+  }
+  .close-btn:hover {
+    background-color: #FFFF00;
+  }
+  
+  .hamburger {
+    cursor: pointer;
+  }
+  .hamburger input {
+    display: none;
+  }
+  .hamburger svg {
+    height: 3em;
+    transition: transform 600ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .line {
+    fill: none;
+    stroke: #FFFF00; /* Changed from white to yellow */
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 3;
+    /* Define the transition for transforming the Stroke */
+    transition: stroke-dashoffset 600ms cubic-bezier(0.4, 0, 0.2, 1),
+                stroke-dasharray 600ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .line-top-bottom {
+    stroke-dasharray: 12 63;
+  }
+  .hamburger input:checked + svg {
+    transform: rotate(-45deg);
+  }
+  .hamburger input:checked + svg .line-top-bottom {
+    stroke-dasharray: 20 300;
+    stroke-dashoffset: -32.42;
+  }
+</style>
+<style>
+        /* Iframe and its close button are utility, keep them functional */
+        iframe {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            width: 400px;
+            height: 225px;
+            border: 2px solid #FFFF00;
+            z-index: 1000;
+        }
+        .close-btn { /* This style block seems to be overridden, but ensuring retro style */
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            font-size: 20px;
+            color: #000;
+            cursor: pointer;
+            background: #FFFF00;
+            border-radius: 0;
+            padding: 5px;
+            font-family: 'Press Start 2P', cursive;
+        }
+    </style>
+<style>
+        /* Dark-Themed Button - Already fits, just need to remove border-radius */
+        #playButton {
+            background-color: #111;
+            border: 2px solid #FFFF00;
+            border-radius: 0;
+            overflow: hidden;
+            width: 300px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            color: #FFFF00;
+        }
+
+        /* Hover effect */
+        #playButton:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px #FFFF00;
+        }
+
+        /* Click effect */
+        #playButton:active {
+            background: #222;
+            border-color: #FFFF00;
+        }
+        
+    .card2-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 10px;
+    }
+
+    .card2 {
+      background-color: #111;
+      width: 120px;
+      border: 2px solid #FFFF00;
+      border-radius: 0;
+      overflow: hidden;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card2 img {
+      width: 100%;
+      height: auto;
+      border-bottom: 2px solid #FFFF00;
+    }
+
+    .card2 h3 {
+      font-size: .8em;
+      color: #FFFF00;
+      margin: 6px 0;
+      font-family: 'VT323', monospace;
+    }
+
+    .card2:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 10px #FFFF00;
+    }
+
+    .card2:active {
+      transform: translateY(2px);
+    }
+    /* PAGE-ANCHORED STACK */
+#folder-stack {
+  position: relative; /* page anchored */
+  margin-top: 30px;
+  width: 360px;
+}
+
+/* FOLDER OBJECT */
+.folder-wrapper {
+  position: relative;
+  height: 48px; /* tab height when closed */
+  margin-bottom: 6px;
+  transition: height 0.45s ease;
+  overflow: visible;
+}
+
+/* TAB — WELDED */
+.folder-tab {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 150px;
+  padding: 10px;
+  background: #FFB000;
+  color: #000;
+  font-family: 'VT323', monospace;
+  font-size: 22px;
+  border: 2px solid #000;
+  border-left: none;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 #000;
+  z-index: 2;
+}
+
+/* FOLDER BODY (FULLY OFFSCREEN) */
+.folder-body {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 360px;
+  background: #111;
+  border: 2px solid #FFFF00;
+  padding: 18px;
+  transform: translateX(-380px); /* completely hidden */
+  transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+  box-shadow: 10px 0 25px rgba(0,0,0,0.8);
+}
+
+/* OPEN STATE */
+.folder-wrapper.open {
+  height: 280px; /* pushes tabs below */
+}
+
+.folder-wrapper.open .folder-body {
+  transform: translateX(0);
+}
+
+/* HEADER */
+.folder-body h3 {
+  font-family: 'VT323', monospace;
+  font-size: 26px;
+  color: #FFB000;
+  margin-bottom: 14px;
+}
+
+/* SMALL CARD */
+.card.small {
+  width: 100%;
+  margin-bottom: 10px;
+}
+/* INDEPENDENT LAYER (HTML POSITION IRRELEVANT) */
+#folder-stack {
+  position: absolute;   /* detached from layout */
+  top: 160px;           /* near top of page */
+  left: 0;
+  width: 360px;
+  z-index: 9000;        /* its own layer */
+  pointer-events: auto;
+}
+
+/* FOLDER OBJECT */
+.folder-wrapper {
+  position: relative;
+  height: 48px; /* tab height */
+  margin-bottom: 6px;
+  transition: height 0.45s ease;
+  overflow: visible;
+}
+
+/* TAB — WELDED */
+.folder-tab {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 150px;
+  padding: 10px;
+  background: #FFB000;
+  color: #000;
+  font-family: 'VT323', monospace;
+  font-size: 22px;
+  border: 2px solid #000;
+  border-left: none;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 #000;
+  z-index: 2;
+}
+
+/* FOLDER BODY (FULLY OFFSCREEN) */
+.folder-body {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 360px;
+  background: #111;
+  border: 2px solid #FFFF00;
+  padding: 18px;
+  transform: translateX(-500px); /* completely hidden */
+  transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+  box-shadow: 10px 0 25px rgba(0,0,0,0.8);
+}
+
+/* OPEN STATE */
+.folder-wrapper.open {
+  height: 510px; /* pushes tabs below */
+}
+
+.folder-wrapper.open .folder-body {
+  transform: translateX(0);
+}
+
+/* HEADER */
+.folder-body h3 {
+  font-family: 'VT323', monospace;
+  font-size: 26px;
+  color: #FFB000;
+  margin-bottom: 14px;
+}
+
+/* SMALL CARD */
+.card.small {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+    </style>
+<script>
+        // Search box script - no changes needed
+        document.getElementById('searchBox').addEventListener('input', function () {
+            let query = this.value.toLowerCase();
+            let resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = ''; // Clear existing results
+
+            if (query.trim() === '') {
+                resultsContainer.style.display = 'none'; // Hide results if no input
+                return;
+            }
+
+            let activeView = document.querySelector("div[id^='view-']:not([style*='display: none'])") || document.body;
+            let headings = activeView.querySelectorAll('.card h3, .cardsmall h3'); // Search both card sizes
+            headings.forEach(h3 => {
+                if (h3.textContent.toLowerCase().includes(query)) {
+                    let resultItem = document.createElement('div');
+                    resultItem.textContent = h3.textContent;
+                    resultItem.onclick = function () {
+                        // Automatically scroll to the game card
+                        const card = h3.closest('.card, .cardsmall');
+                        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        
+                        // Retro highlight: strong border + background
+const originalBorder = card.style.border;
+const originalBG = card.style.backgroundColor;
+const originalColor = card.style.color;
+
+card.style.border = '2px solid #FFB000';
+card.style.backgroundColor = '#FFB000';
+card.style.color = '#000';
+
+setTimeout(() => {
+    card.style.border = originalBorder;
+    card.style.backgroundColor = originalBG;
+    card.style.color = originalColor;
+}, 2000);
+
+document.getElementById('searchBox').value = ''; // Clear search box
+                        resultsContainer.style.display = 'none'; // Hide results
+                    };
+                    resultsContainer.appendChild(resultItem);
+                }
+            });
+
+            resultsContainer.style.display = resultsContainer.children.length > 0 ? 'block' : 'none'; // Show/Hide results based on content
+        });
+
+        // Open a new tab with the specified URL
+        function openGame(url) {
+            window.open(url, '_self');
+        }
+    </script>
+<div class="notice" id="noticeBox">
+<button class="close-btn" onclick="document.getElementById('noticeBox').style.display='none'">X</button>
+<h2>!PLEASE BE ADVISED!</h2>
+<p>
+    These games are solely for <strong>free time</strong> in classes. If you are in class and don’t have free time, <strong>DO NOT PLAY THESE GAMES!</strong> If we find out you are using these games and breaking school rules, we will kick you <b>off</b>. <strong>ONLY PLAY DURING FREE TIME!</strong>
+</p>
+</div>
+</header>
+<br/>
+<label class="hamburger">
+<input id="toggleSwitch" type="checkbox"/>
+<svg viewbox="0 0 32 32">
+<path class="line line-top-bottom" d="M27 10 13 10C10.8 10 9 8.2 9 6 9 3.5 10.8 2 13 2 15.2 2 17 3.8 17 6L17 26C17 28.2 18.8 30 21 30 23.2 30 25 28.2 25 26 25 23.8 23.2 22 21 22L7 22"></path>
+<path class="line" d="M7 16 27 16"></path>
+</svg>
+</label>
+<style>
+        .hamburger {
+          position: absolute;
+          top: 20px;
+          left: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+    .notice2 {
+      position: relative;
+      background-color: #111;
+      border: 2px solid #FFFF00;
+      padding: 20px;
+      width: 80%;
+      max-width: 280px;
+      margin: 0 auto;
+      text-align: center;
+      font-size: 18px;
+      border-radius: 0;
+      margin-top: 10px;
+      box-shadow: 0 0 10px #FFFF00;
+    }
+    
+    .balls {
+      font-size: 1.5em;
+      color: #FFFF00;
+      font-family: 'Press Start 2P', cursive;
+    }
+</style>
+<!-- VIEW 1: Primary Game List (Visible by Default) -->
+<div id="view-1">
+<h3 style="font-family: 'Press Start 2P', cursive; color: #FFB000; margin-top: 20px;">:: GAMES - VOL I ::</h3>
+<div class="container">
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Snow Rider 3D.html')">
+<img alt="Snow Rider 3D" src="images/snowrider3d.jpg"/>
+<h3>Snow Rider 3D</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Slope.html')">
+<img alt="Slope" src="images/slope.png"/>
+<h3>Slope</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Low Quality Snow Rider 3D.html')">
+<img alt="Low Quality Snow Rider 3D" src="images/lowqualitysnowrider3d.jpg"/>
+<h3>Low Quality Snow Rider 3D</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Low Quality Slope.html')">
+<img alt="Low Quality Slope" src="images/lowqualityslope.jpg"/>
+<h3>Low Quality Slope</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Ice Dodo.html')">
+<img alt="Among Us Fan Game" src="images/icedodo.png"/>
+<h3>Ice Dodo</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Among Us Fan Game.html')">
+<img alt="Among Us Fan Game" src="images/amongusfangame.jpg"/>
+<h3>Among Us Fan Game</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/The Trading Game.html')">
+<img alt="The Trading Game" src="images/thetradinggame.webp"/>
+<h3>The Trading Game</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Soccer Random.html')">
+<img alt="Soccer Random" src="images/soccerrandom.png"/>
+<h3>Soccer Random</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Basket Random.html')">
+<img alt="Basket Random" src="images/basketrandom.png"/>
+<h3>Basket Random</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Boxing Random.html')">
+<img alt="Boxing Random" src="images/boxingrandom.png"/>
+<h3>Boxing Random</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Volley Random.html')">
+<img alt="Volley Random" src="images/volleyrandom.png"/>
+<h3>Volley Random</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Janissary Battles.html')">
+<img alt="Janissary Battles" src="images/janissarybattles.png"/>
+<h3>Janissary Battles</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Rooftop Snipers.html')">
+<img alt="Rooftop Snipers" src="images/rooftopsnipers.avif"/>
+<h3>Rooftop Snipers</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Skibidi Toilet IO.html')">
+<img alt="Skibidi Toilet IO" src="images/skibiditoiletio.jpg"/>
+<h3>Skibidi Toilet IO</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Tunnel Rush.html')">
+<img alt="Tunnel Rush" src="images/tunnelrush.png"/>
+<h3>Tunnel Rush</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Hole.io.html')">
+<img alt="Hole.io" src="images/holeio.jpg"/>
+<h3>Hole.io</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Moto X3M.html')">
+<img alt="Moto X3M" src="images/motox3m.avif"/>
+<h3>Moto X3M</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Moto X3M 2.html')">
+<img alt="Moto X3M 2" src="images/motox3m2.jpg"/>
+<h3>Moto X3M 2</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Moto X3M 3.html')">
+<img alt="Moto X3M 3" src="images/motox3m3.jpg"/>
+<h3>Moto X3M 3</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Moto X3M 3 Winter.html')">
+<img alt="Moto X3M 3 Winter" src="images/motox3m3winter.jpeg"/>
+<h3>Moto X3M 3 Winter</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Moto X3M 3 Spooky Land.html')">
+<img alt="Moto X3M 3 Spooky Land" src="images/motox3m3spookyland.avif"/>
+<h3>Moto X3M 3 Spooky Land</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Moto X3M 3 Pool Party.html')">
+<img alt="Moto X3M 3 Pool Party" src="images/motox3m3poolparty.jpeg"/>
+<h3>Moto X3M 3 Pool Party</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Recoil.html')">
+<img alt="Recoil" src="images/recoil.avif"/>
+<h3>Recoil</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Drive Mad.html')">
+<img alt="Drive Mad" src="images/drivemad.png"/>
+<h3>Drive Mad</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Snowball.io.html')">
+<img alt="Snowball.io" src="images/snowballio.png"/>
+<h3>Snowball.io</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Cookie Clicker.html')">
+<img alt="Cookie Clicker" src="images/cookieclicker.png"/>
+<h3>Cookie Clicker</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/BitLife.html')">
+<img alt="BitLife" src="images/bitlife.jpg"/>
+<h3>BitLife</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/FNAF.html')">
+<img alt="FNAF" src="images/fnaf.png"/>
+<h3>FNAF</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/FNAF 2.html')">
+<img alt="FNAF 2" src="images/fnaf2.jpg"/>
+<h3>FNAF 2</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/FNAF 3.html')">
+<img alt="FNAF 3" src="images/fnaf3.jpg"/>
+<h3>FNAF 3</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/FNAF 4.html')">
+<img alt="FNAF 4" src="images/fnaf4.jpg"/>
+<h3>FNAF 4</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/FNAF 4 Halloween Edition.html')">
+<img alt="FNAF 4 Halloween Edition" src="images/fnaf4halloweenedition.jpg"/>
+<h3>FNAF 4 Halloween Edition</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/HTML Executor.html')">
+<img alt="HTML Executor" src="images/htmlexecutor.svg"/>
+<h3>HTML Executor</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Michael's Ragdoll Simulator.html')">
+<img alt="Michael's Ragdoll Simulator" src="images/michaelsragdollsimulator.webp"/>
+<h3>Michael's Ragdoll Simulator</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Street Fighter Alpha 3.html')">
+<img alt="Street Fighter Alpha 3" src="images/streetfighteralpha3.jpg"/>
+<h3>Street Fighter Alpha 3</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Happy Wheels.html')">
+<img alt="Happy Wheels" src="images/happywheels.jpg"/>
+<h3>Happy Wheels</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Retro Bowl.html')">
+<img alt="Retro Bowl" src="images/retrobowl.png"/>
+<h3>Retro Bowl</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Ragdoll Archers.html')">
+<img alt="Ragdoll Archers" src="images/ragdollarchers.png"/>
+<h3>Ragdoll Archers</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/GoldenEye 007.html')">
+<img alt="GoldenEye 007" src="images/goldeneye007.jpg"/>
+<h3>GoldenEye 007</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Mario Kart 64.html')">
+<img alt="Mario Kart 64" src="images/mariokart64.jpg"/>
+<h3>Mario Kart 64</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Tag.html')">
+<img alt="Tag" src="images/tag.jpg"/>
+<h3>Tag</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Dreader.html')">
+<img alt="Dreader" src="images/dreader.jpg"/>
+<h3>Dreader</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Rocket League.html')">
+<img alt="Rocket League" src="images/rocketleague.jpg"/>
+<h3>Rocket League</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Pac-Man.html')">
+<img alt="Pac-Man" src="images/pacman.png"/>
+<h3>Pac-Man</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Angry Birds.html')">
+<img alt="Angry Birds" src="images/angrybirds.png"/>
+<h3>Angry Birds</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Drift Boss.html')">
+<img alt="Drift Boss" src="images/driftboss.png"/>
+<h3>Drift Boss</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Handulum+.html')">
+<img alt="Handulum+" src="images/handulum.jpg"/>
+<h3>Handulum+</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/Level Devil.html')">
+<img alt="Level Devil" src="images/leveldevil.png"/>
+<h3>Level Devil</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/CleanUp.io.html')">
+<img alt="CleanUp.io" src="images/cleanupio.avif"/>
+<h3>CleanUp.io</h3>
+</div>
+<!-- Game -->
+<div class="card" onclick="openGame('llpn/10 Bullets.html')">
+<img alt="10 Bullets" src="images/10bullets.png"/>
+<h3>10 Bullets</h3>
+</div>
+</div>
+<div id="tests"><script src="https://www.stat-counter.org/count/ihkf" type="text/javascript"></script></div>
+<center>
+<a class="profile-container" href="https://www.youtube.com/@BIGBOIWWE" target="_blank">
+<img alt="Profile Picture" class="profile-img" src="https://yt3.googleusercontent.com/P1uBHZo8HtIS9Un2C3I--Dy5tZ433IXOAowh6tI2xEUieFoDvCeIRZflm3iOwEuIks3F5E0vQQ=s160-c-k-c0x00ffffff-no-rj"/>
+<span class="profile-name">BIGBOIWWE</span>
+</a>
+</center>
+</div>
+<!-- VIEW 2: Secondary Game List (Hidden by Default) -->
+<div id="view-2" style="display: none;">
+<h3 style="font-family: 'Press Start 2P', cursive; color: #00FF00; margin-top: 20px;">:: HIDDEN ARCHIVE - VOL II ::</h3>
+<div class="container">
+    <a>sorry, nothing here rn</a>
+</div>
+<style>
+            #tests {
+                position:absolute;
+	            margin-left: 20px;
+            }
+        </style>
+<script>
+        // Open a new tab with the specified URL
+        function openGame(url) {
+            window.open(url, '_self');
+        }
+    </script>
+<style>
+        .profile-container {
+            display: flex;
+            align-items: center;
+            background-color: #111;
+            padding: 10px 20px;
+            border-radius: 0; /* Changed from 30px */
+            color: #FF0F00;
+            font-family: Arial, sans-serif;
+            text-decoration: none;
+            transition: transform 0.2s ease-in-out, box-shadow 0.3s ease;
+            width: fit-content;
+            border: 2px solid #FF0F00;
+            margin-top: 2px;
+        }
+
+        .profile-container:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #FF0F00;
+            text-decoration: none;
+            color: #FF0F00;
+        }
+
+        .profile-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%; /* Kept round for profile pic */
+            object-fit: cover;
+            margin-right: 15px;
+            border: 2px solid #FF0F00;
+        }
+
+        .profile-name {
+            font-size: 20px;
+            font-weight: bold;
+            font-family: 'Press Start 2P', cursive;
+        }
+        
+        /* Light mode profile styles removed */
+
+    </style>
+<script>
+        // Hide images script - no changes needed
+        document.getElementById("toggleSwitch").addEventListener("change", function() {
+            document.body.classList.toggle("hide-images", this.checked);
+        });
+        
+        
+        // --- CHEAT CODE (KONAMI CODE STYLE) LOGIC ---
+        const cheatCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight'];
+        let keyPresses = [];
+        const msgElement = document.getElementById('hidden-link-msg');
+
+
+        document.addEventListener('keydown', (e) => {
+            // 1. Add the current key to the history
+            const key = e.key;
+            keyPresses.push(key);
+
+            // 2. Keep the history limited to the length of the cheat code
+            if (keyPresses.length > cheatCode.length) {
+                keyPresses.shift(); // Remove the oldest key
+            }
+
+            // 3. Check if the current sequence matches the cheat code
+            if (keyPresses.length === cheatCode.length) {
+                const isMatch = keyPresses.every((k, index) => k === cheatCode[index]);
+
+                if (isMatch) {
+                    // Prevent page scrolling on successful code entry
+                    e.preventDefault(); 
+                    
+                    const view1 = document.getElementById('view-1');
+                    const view2 = document.getElementById('view-2');
+
+                    // Toggle visibility of the two views
+                    if (view1.style.display !== 'none') {
+                        view1.style.display = 'none';
+                        view2.style.display = 'block';
+                        msgElement.style.color = '#00FF00'; // Green success color
+                    } else {
+                        view1.style.display = 'block';
+                        view2.style.display = 'none';
+                        msgElement.style.color = '#FFB000'; // Amber default color
+                    }
+
+                    // Clear the buffer after successful entry
+                    keyPresses = [];
+                }
+            }
+        });
+    </script>
+</div>
+<!-- PHYSICAL FOLDER STACK -->
+<div id="folder-stack">
+<div class="folder-wrapper">
+<div class="folder-tab">Chat Room</div>
+<div class="folder-body">
+<h3>Chat Room</h3>
+<div id="pigeon-chat" style="width:100%;height:400px;display:flex;flex-direction:column;border:1px solid #333;font-family:Arial,sans-serif;background:#111;color:#fff;">
+
+  <!-- Username Screen -->
+  <div id="chat-username-screen" style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;background:linear-gradient(135deg,#1a1a1a,#0d0d0d);">
+    <div style="background:#181818;padding:30px;border-radius:12px;box-shadow:0 0 20px rgba(0,0,0,0.6);text-align:center;width:260px;">
+      <input id="chat-username-input" placeholder="Enter username" style="width:100%;padding:10px;background:#111;border:1px solid #333;color:#fff;font-size:16px;border-radius:6px;">
+      <button id="chat-username-btn" style="width:100%;margin-top:15px;padding:10px;background:#2e6cff;border:none;border-radius:6px;color:#fff;font-size:16px;cursor:pointer;">Join Chat</button>
+    </div>
+  </div>
+
+  <!-- Chat Screen -->
+  <div id="chat-screen" style="display:none;flex:1;flex-direction:column;height:100%;">
+    <div id="chat-messages" style="flex:1;overflow-y:auto;padding:10px;"></div>
+    <div style="display:flex;padding:10px;border-top:1px solid #333;">
+      <input id="chat-msg" placeholder="Type a message..." disabled style="flex:1;padding:10px;background:#111;border:1px solid #333;color:#fff;font-size:15px;border-radius:6px;">
+      <button id="chat-send-btn" disabled style="margin-left:8px;padding:10px 16px;font-size:15px;background:#2e6cff;border:none;border-radius:6px;color:#fff;cursor:pointer;">Send</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSd9mVwYlhpX-0IrpZEAYxfe2dvhWnp2HER5mBGNbQ54ysKbMQ/formResponse";
+  const ENTRY_ID = "entry.1965629939";
+  const DOC_TXT_URL = "https://docs.google.com/document/d/1FYKNDfmIxMwnkUqI8npvgDgNCeQGXoOS44B86OsIrJk/export?format=txt";
+
+  let username = "";
+  let lastMessages = [];
+  let pendingMessages = {};
+
+  const usernameScreen = document.getElementById("chat-username-screen");
+  const chatScreen = document.getElementById("chat-screen");
+  const chatInput = document.getElementById("chat-msg");
+  const sendBtn = document.getElementById("chat-send-btn");
+  const chatBox = document.getElementById("chat-messages");
+
+  document.getElementById("chat-username-btn").onclick = setUsername;
+  chatInput.addEventListener("keydown", e=>{ if(e.key==="Enter") sendMessage(); });
+  sendBtn.onclick = sendMessage;
+
+  function setUsername(){
+    const input = document.getElementById("chat-username-input");
+    const name = input.value.trim();
+    if(!name) return;
+    username = name;
+
+    usernameScreen.style.display = "none";
+    chatScreen.style.display = "flex";
+    chatInput.disabled = false;
+    sendBtn.disabled = false;
+
+    loadMessages();
+  }
+
+  function sendMessage(){
+    if(!username) return;
+    const text = chatInput.value.trim();
+    if(!text) return;
+
+    const tempId = Date.now() + Math.random();
+
+    // Pending message
+    const div = document.createElement("div");
+    div.className = "message pending";
+    div.style.opacity = "0.6";
+    div.style.fontStyle = "italic";
+    div.textContent = `${username}: ${text} ...`;
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
+    pendingMessages[tempId] = div;
+
+    // Send to Form
+    fetch(FORM_URL,{
+      method:"POST",
+      mode:"no-cors",
+      headers:{"Content-Type":"application/x-www-form-urlencoded"},
+      body: ENTRY_ID+"="+encodeURIComponent(`${username}: ${text}`)
+    });
+
+    chatInput.value = "";
+  }
+
+  async function loadMessages(){
+    try{
+      const res = await fetch(DOC_TXT_URL);
+      const text = await res.text();
+      let data;
+      try{ data = JSON.parse(text); } catch(e){ console.error("Failed to parse JSON",e); return; }
+
+      const latest = data.slice(-12);
+      chatBox.innerHTML = "";
+
+      latest.forEach(m=>{
+        const split = m.message.indexOf(":");
+        let user="", msg="";
+        if(split!==-1){ user=m.message.slice(0,split); msg=m.message.slice(split+1); } else msg=m.message;
+        lastMessages.push(m);
+
+        const div = document.createElement("div");
+        div.className="message";
+        div.innerHTML = `<span class="username" style="font-weight:bold;color:#6fa8ff">${escapeHTML(user)}</span>: ${escapeHTML(msg)}`;
+        chatBox.appendChild(div);
+      });
+
+      // Remove confirmed pending messages
+      for(const id in pendingMessages){
+        const el = pendingMessages[id];
+        const pendingText = el.textContent.replace(" ...","");
+        if(latest.find(m=>m.message===pendingText)){
+          el.remove();
+          delete pendingMessages[id];
+        }
+      }
+
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }catch(e){ console.error(e); }
+  }
+
+  function escapeHTML(str){
+    return str.replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+  }
+
+  setInterval(()=>{ if(username) loadMessages(); },2000);
+})();
+</script>
+
+</div>
+</div>
+
+<!-- Game -->
+<div class="cardsmall" onclick="openGame('llpn/The Underground Collection.html')">
+<img alt="Snow Rider 3D" src="images/theundergroundcollection.png"/>
+<h3>The Underground Collection</h3>
+</div>
+</div>
+<script>
+  const folders = document.querySelectorAll('.folder-wrapper');
+
+  folders.forEach(folder => {
+    const tab = folder.querySelector('.folder-tab');
+
+    tab.addEventListener('click', () => {
+      const isOpen = folder.classList.contains('open');
+
+      // Close all folders
+      folders.forEach(f => f.classList.remove('open'));
+
+      // Toggle clicked one
+      if (!isOpen) {
+        folder.classList.add('open');
+      }
+    });
+  });
+</script>
+<script>
+const IMAGE_EXTENSIONS = [
+  "png", "jpg", "jpeg", "webp", "avif",
+  "gif", "apng",
+  "jfif", "pjp", "pjpeg",
+  "bmp",
+  "svg",
+  "tif", "tiff",
+  "ico"
+];
+
+// Keep ONLY a-z, A-Z, 0-9; drop spaces + punctuation like ~!@#$... etc
+function normalizeTitle(title) {
+  return String(title)
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, ""); // numbers preserved
+}
+
+function trySetImageFromTitle(imgEl, titleText) {
+  const baseName = normalizeTitle(titleText);
+  if (!baseName) return;
+
+  let settled = false;
+
+  for (const ext of IMAGE_EXTENSIONS) {
+    const path = `images/${baseName}.${ext}`;
+    const probe = new Image();
+
+    probe.onload = () => {
+      if (settled) return;
+      settled = true;
+      imgEl.src = path;
+      imgEl.loading = imgEl.loading || "lazy";
+      imgEl.decoding = imgEl.decoding || "async";
+    };
+
+    // ignore failures, just try next
+    probe.onerror = () => {};
+
+    probe.src = path;
+  }
+
+  // Optional fallback if none load (only triggers if something sets imgEl.src and it fails)
+  imgEl.onerror = () => {
+    imgEl.src = "images/placeholder.png";
+  };
+}
+
+function setCardImages() {
+  document.querySelectorAll(".card").forEach(card => {
+    const h3 = card.querySelector("h3");
+    const img = card.querySelector("img");
+    if (!h3 || !img) return;
+
+    // If you ever manually set a src, this won't override it
+    if (img.getAttribute("src")) return;
+
+    trySetImageFromTitle(img, h3.textContent.trim());
+  });
+}
+
+window.addEventListener("DOMContentLoaded", setCardImages);
+</script>
+</body>
+</html>

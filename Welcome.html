@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+<link rel="icon" type="image/png" href="favicon.png"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles to enhance the retro/pixel effect */
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        :root {
+            --primary-color: #00ff00; /* Neon Green */
+            --secondary-color: #008080; /* Teal/Cyan */
+            --background-color: #0a0a0a; /* Near Black */
+            --shadow-color: #ff00ff; /* Neon Pink/Magenta */
+            --border-color: #ffffff;
+        }
+
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background-color: var(--background-color);
+            color: var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            text-shadow: 0 0 5px var(--primary-color);
+        }
+
+        .splash-container {
+            width: 90%;
+            max-width: 600px;
+            padding: 2rem;
+            border: 4px solid var(--border-color);
+            box-shadow: 0 0 0 8px var(--primary-color), 0 0 20px 10px var(--shadow-color);
+            animation: flicker 1s infinite alternate;
+            background-image: repeating-linear-gradient(
+                0deg,
+                rgba(255, 255, 255, 0.05),
+                rgba(255, 255, 255, 0.05) 1px,
+                transparent 1px,
+                transparent 2px
+            ); /* Scanline effect */
+        }
+
+        /* Flicker animation for CRT glow effect */
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            25% { opacity: 0.98; }
+            50% { opacity: 1.02; }
+            75% { opacity: 0.99; }
+        }
+
+        /* Logo text effect */
+        .logo-text {
+            color: var(--secondary-color);
+            text-shadow: 
+                -2px -2px 0 var(--primary-color),
+                2px -2px 0 var(--primary-color),
+                -2px 2px 0 var(--primary-color),
+                2px 2px 0 var(--primary-color),
+                0 0 10px var(--secondary-color),
+                0 0 20px var(--secondary-color);
+        }
+
+        /* Pixelated Button */
+        .pixel-button {
+            background-color: var(--secondary-color);
+            color: var(--background-color);
+            border: 2px solid var(--primary-color);
+            padding: 8px 16px;
+            cursor: pointer;
+            box-shadow: 2px 2px 0 var(--primary-color);
+            transition: all 0.1s ease-in-out;
+        }
+
+        .pixel-button:hover {
+            background-color: var(--primary-color);
+            color: var(--background-color);
+            box-shadow: 4px 4px 0 var(--shadow-color);
+            transform: translate(-2px, -2px);
+        }
+
+        .pixel-button:active {
+            transform: translate(0, 0);
+            box-shadow: 0 0 0 var(--primary-color);
+        }
+
+        /* Progress bar container (for the loading animation) */
+        .progress-bar-container {
+            border: 2px solid var(--primary-color);
+            background-color: #222;
+        }
+
+        /* Progress bar fill */
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="splash-screen" class="splash-container flex flex-col items-center justify-center text-center rounded-lg">
+        
+        <!-- Header / Main Title -->
+        <div class="mb-8">
+            <h1 class="text-4xl sm:text-5xl md:text-6xl logo-text leading-tight">
+                UNDERGROUND
+            </h1>
+            <h2 class="text-2xl sm:text-3xl mt-2 text-white">
+                STUDIOS
+            </h2>
+        </div>
+
+        <!-- System Message -->
+        <p id="system-message" class="text-sm sm:text-base mb-8 h-6">
+            Loading System Modules...
+        </p>
+
+        <!-- Interactive Progress Bar (Loading Simulation) -->
+        <div class="w-full max-w-sm mb-10">
+            <div class="progress-bar-container h-6 rounded-sm">
+                <div id="loading-progress" class="progress-bar"></div>
+            </div>
+            <p id="loading-percent" class="text-sm mt-2 text-right">0%</p>
+        </div>
+
+        <!-- Interaction Button -->
+        <button id="start-button" class="pixel-button text-lg sm:text-xl font-bold hidden">
+            PRESS START
+        </button>
+
+        <!-- Footer / Copyright -->
+        <p class="text-xs mt-8 opacity-70">
+            &gt; 2025 ALL RIGHTS RESERVED
+        </p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const progressBar = document.getElementById('loading-progress');
+            const loadingPercent = document.getElementById('loading-percent');
+            const startButton = document.getElementById('start-button');
+            const systemMessage = document.getElementById('system-message');
+            const splashScreen = document.getElementById('splash-screen');
+            let progress = 0;
+            let loadingInterval;
+            const redirectUrl = 'Home.html';
+            
+            // --- Loading Simulation Function ---
+            const startLoading = () => {
+                loadingInterval = setInterval(() => {
+                    // Randomly increase progress to simulate non-linear loading
+                    const increase = Math.floor(Math.random() * 5) + 1; 
+                    progress += increase;
+
+                    if (progress >= 100) {
+                        progress = 100;
+                        clearInterval(loadingInterval);
+                        
+                        // Update UI to completion state
+                        progressBar.style.width = '100%';
+                        loadingPercent.textContent = '100%';
+                        systemMessage.textContent = 'SYSTEM READY. INITIALIZE.';
+                        
+                        // Show the 'PRESS START' button
+                        setTimeout(() => {
+                            startButton.classList.remove('hidden');
+                            // Add a subtle bounce animation to the button
+                            startButton.style.animation = 'pulse 1s infinite';
+                        }, 500); 
+
+                    } else {
+                        // Update UI during loading
+                        progressBar.style.width = progress + '%';
+                        loadingPercent.textContent = progress + '%';
+                        
+                        // Cycle through loading messages
+                        if (progress < 30) {
+                             systemMessage.textContent = 'Initializing Graphics Driver...';
+                        } else if (progress < 60) {
+                             systemMessage.textContent = 'Allocating Memory Blocks...';
+                        } else if (progress < 90) {
+                             systemMessage.textContent = 'Loading Game Assets (v1.0)...';
+                        }
+                    }
+                }, 100); // Update every 100ms
+            };
+
+            // --- Button Click Handler ---
+            startButton.addEventListener('click', () => {
+                // 1. When 'PRESS START' is clicked, fade out the splash screen (0.5s transition)
+                splashScreen.style.transition = 'opacity 0.5s ease-out';
+                splashScreen.style.opacity = '0';
+                
+                // 2. Wait 500ms for the fade-out to complete
+                setTimeout(() => {
+                    
+                    // Display 'LOADING COMPLETE' and redirection message
+                    document.body.innerHTML = `
+                        <div class="text-center">
+                            <h1 class="text-3xl text-green-400">LOADING COMPLETE</h1>
+                            <p class="text-lg text-gray-400 mt-4">Opening site...</p>
+                        </div>
+                    `;
+
+                    // 3. Wait an additional 2000ms (2 seconds) for the redirect
+                    setTimeout(() => {
+                        // Open the URL in a new tab
+                        window.location.href = redirectUrl;
+                        
+                        // Update the on-screen message after the redirect is triggered
+                        document.body.innerHTML = `
+                            <div class="text-center">
+                                <h1 class="text-3xl text-green-400">LOADING COMPLETE</h1>
+                                <p class="text-lg text-gray-400 mt-4">Redirect attempt complete. Check new tab.</p>
+                            </div>
+                        `;
+                    }, 2000); // 2000ms = 2 seconds delay
+                    
+                }, 500); // 500ms = wait for fade-out
+            });
+
+            // Start the loading sequence when the script runs
+            startLoading();
+        });
+    </script>
+</body>
+</html>

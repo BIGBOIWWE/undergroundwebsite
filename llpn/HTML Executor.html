@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Run HTML in New Tab</title>
+  <style>
+    body { font-family: sans-serif; padding: 1rem; }
+    textarea {
+      width: 100%;
+      height: 200px;
+      box-sizing: border-box;
+      font-family: monospace;
+    }
+    button {
+      margin-top: 0.5rem;
+      padding: 0.4rem 0.8rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .file-controls {
+      margin: 1rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    #dropZone {
+      border: 2px dashed #888;
+      border-radius: 6px;
+      padding: 1rem;
+      text-align: center;
+      color: #555;
+      font-size: 0.95rem;
+    }
+    #dropZone.dragover {
+      border-color: #007bff;
+      background: #f0f7ff;
+      color: #004a99;
+    }
+    #status {
+      font-size: 0.9rem;
+      color: #333;
+      margin-top: 0.25rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Run HTML in a New Tab</h1>
+
+  <!-- File input + drag/drop zone -->
+  <div class="file-controls">
+    <label>
+      Load HTML file:
+      <input type="file" id="fileInput" accept=".html,.htm,text/html" />
+    </label>
+    <div id="dropZone">
+      Drag &amp; drop an HTML file here
+    </div>
+    <div id="status"></div>
+  </div>
+
+  <textarea id="htmlInput">
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My New Tab</title>
+  </head>
+  <body>
+    <h1>Hello from the new tab!</h1>
+    <p>This HTML was injected via JavaScript.</p>
+  </body>
+</html>
+  </textarea>
+
+  <br />
+  <button id="runButton">Open &amp; Run HTML</button>
+
+  <script>
+    const htmlInput = document.getElementById('htmlInput');
+    const runButton = document.getElementById('runButton');
+    const fileInput = document.getElementById('fileInput');
+    const dropZone = document.getElementById('dropZone');
+    const statusEl = document.getElementById('status');
+
+    // Keeps track if we've loaded a file and its contents
+    let loadedFileContent = null;
+    let loadedFileName = null;
+    let textareaRemoved = false;
+
+    function removeTextareaOnce() {
+      if (!textareaRemoved && htmlInput) {
+        htmlInput.parentNode.removeChild(htmlInput);
+        textareaRemoved = true;
+      }
+    }
+
+    // Reusable function to load a File object into memory (NOT into the textarea)
+    function loadFileToMemory(file) {
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        loadedFileContent = e.target.result;
+        loadedFileName = file.name || 'HTML file';
+
+        // Remove the textarea so massive files don't crash the page
+        removeTextareaOnce();
+
+        statusEl.textContent = `Loaded file: ${loadedFileName} (textarea removed; using file contents when running)`;
+      };
+      reader.onerror = function () {
+        alert('Error reading file.');
+      };
+      reader.readAsText(file);
+    }
+
+    // Handle "Open & Run HTML" button
+    runButton.addEventListener('click', function () {
+      const html = loadedFileContent !== null
+        ? loadedFileContent
+        : (htmlInput ? htmlInput.value : '');
+
+      if (!html) {
+        alert('No HTML content to run.');
+        return;
+      }
+
+      const win = window.open('', '_blank');
+      if (!win) {
+        alert('Popup blocked or window.open not allowed here.');
+        return;
+      }
+
+      win.document.open();
+      win.document.write(html);
+      win.document.close();
+    });
+
+    // Handle file input (click + select)
+    fileInput.addEventListener('change', function () {
+      const file = this.files && this.files[0];
+      loadFileToMemory(file);
+    });
+
+    // Drag & drop handlers
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, preventDefaults, false);
+    });
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, () => {
+        dropZone.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, () => {
+        dropZone.classList.remove('dragover');
+      }, false);
+    });
+
+    dropZone.addEventListener('drop', function (e) {
+      const dt = e.dataTransfer;
+      const file = dt && dt.files && dt.files[0];
+      loadFileToMemory(file);
+    });
+  </script>
+</body>
+</html>
